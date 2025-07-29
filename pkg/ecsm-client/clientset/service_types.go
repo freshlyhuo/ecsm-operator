@@ -50,6 +50,20 @@ type ServiceDeleteResponse struct {
 	ID string `json:"transactionId"`
 }
 
+// DeleteByPathResult 代表按路径批量删除服务时，返回数组中单个服务的删除结果。
+type DeleteByPathResult struct {
+	ProvisionID   string      `json:"provisionId"`
+	Result        string      `json:"result"`
+	TransactionID string      `json:"transactionId"`
+	Error         interface{} `json:"error,omitempty"` // 使用 interface{} 以兼容 null 或错误字符串
+}
+
+type CreateByPathOptions struct {
+	Paths  []string `json:"paths"`
+	Force  *bool    `json:"force,omitempty"`
+	Action string   `json:"-"` //字段位于path，无需序列化。run代表部署，load代表预部署
+}
+
 // ServiceGet mimics the response from the GET /service/:id endpoint.
 // ServiceGet 精确匹配 GET /service/:id API 的成功响应 data。
 type ServiceGet struct {
@@ -144,4 +158,36 @@ type UpdateServiceRequest struct {
 	Policy string    `json:"policy,omitempty"` // "dynamic" or "static"
 
 	// 注意：Update 的 payload 中似乎没有 prepull 字段，所以我们不在这里包含它。
+}
+
+// ControlServicesResponse 是批量操作服务返回的IDs列表
+type ControlServicesResponse struct {
+	IDs []string `json:"ids"`
+}
+
+// --- ACTIONS Structures ---
+
+//RedeployRequest 是重新部署容器信息
+type RedeployRequest struct {
+	ID string `json:"id"`
+}
+
+//校验服务名称
+type ValidateNameOptions struct {
+	Name string `json:"name"`
+	ID   string `json:"id,omitempty"`
+}
+
+//RollBackRequest 是需要回滚服务部署记录的信息
+type RollBackRequest struct {
+	ID       string `json:"id"`
+	RecordID string `json:"recordId"`
+}
+
+// --- Statistics Structures ---
+
+// ServiceStatistics 是服务的统计信息，如服务总数和服务健康数
+type ServiceStatistics struct {
+	Total  int `json:"total"`
+	Health int `json:"health"`
 }
