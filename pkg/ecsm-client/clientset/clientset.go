@@ -5,10 +5,12 @@ import "github.com/fx147/ecsm-operator/pkg/ecsm-client/rest"
 type Interface interface {
 	RESTClient() rest.RESTClient
 	ServiceGetter
+	MicroServiceGetter
 	RecordGetter
 	ContainerGetter
 	NodeGetter
 	ConfigGetter
+	TemplateGetter
 }
 
 type Clientset struct {
@@ -39,6 +41,10 @@ func (c *Clientset) Services() ServiceInterface {
 	return newServices(&c.restClient)
 }
 
+func (c *Clientset) MicroServices() MicroServiceInterface {
+	return newMicroServices(&c.restClient)
+}
+
 // Records 返回 RecordInterface，用于操作 Record 资源
 func (c *Clientset) Records() RecordInterface {
 	return newRecords(&c.restClient)
@@ -59,4 +65,8 @@ func (c *Clientset) Images() ImageInterface {
 
 func (c *Clientset) Configs() ConfigInterface {
 	return newConfigs(&c.restClient)
+}
+
+func (c *Clientset) Templates() TemplateInterface {
+	return newTemplates(&c.restClient)
 }
